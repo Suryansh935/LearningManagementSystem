@@ -1,0 +1,36 @@
+# =========================
+# Node / JavaScript
+# =========================
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# Environment variables
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Build outputs
+# =========================
+dist/
+build/
+out/
+.vite/
+
+# =========================
+# Framework specific
+# =========================
+.next/
+coverage/
+
+# =========================
+# OS & Editor
+# =========================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

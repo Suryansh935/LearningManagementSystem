@@ -1,0 +1,12 @@
+/* 1. Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+/* 2. Tailwind v3 directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 3. Global styles */
+body {
+  font-family: 'Outfit', sans-serif;
+}
