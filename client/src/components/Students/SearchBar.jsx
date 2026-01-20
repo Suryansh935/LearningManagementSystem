@@ -12,6 +12,7 @@ const onSearchHandler=(e)=>{
 e.preventDefault()
 navigate('/course-list/'+input)
 }
+
   return (
     <div>
      <form onSubmit={onSearchHandler} 
