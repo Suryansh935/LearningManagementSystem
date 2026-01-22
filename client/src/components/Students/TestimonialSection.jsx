@@ -54,6 +54,9 @@ const TestimonialSection = () => {
                       {testimonial.feedback}</p>
 
                 </div>
+                <a href="#" className='text-blue-500 underline px-5'>
+                  Read more
+                </a>
             </div>
           ))}
         </div>
