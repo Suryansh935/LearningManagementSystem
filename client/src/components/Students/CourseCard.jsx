@@ -28,8 +28,9 @@ const CourseCard = ({course}) => {
 
         <div className='flex'>
           {[...Array(5)].map((__,i)=>(<img key={i} 
-          src={i<Math.floor(calculateRating(course))?assets.star:assets.star_blank} alt=""
-          className='w-3.5 h-3.5'/> 
+          src={i<Math.floor(calculateRating(course))?
+            assets.star:assets.star_blank} alt=""
+            className='w-3.5 h-3.5'/> 
         ))}
         </div>
 
