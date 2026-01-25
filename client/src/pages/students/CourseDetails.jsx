@@ -5,6 +5,7 @@ import Loading from "../../components/Students/Loading";
 import Footer from "../../components/Students/Footer";
 import { assets } from "../../assets/assets";
 import humanizeDuration from "humanize-duration";
+import YouTube from 'react-youtube'
 
 const CourseDetails = () => {
   const { id } = useParams();
@@ -146,8 +147,10 @@ const CourseDetails = () => {
                           </p>
 
                           <div className="flex gap-2 text-gray-500">
-                            {lecture.isPreviewFree && (
-                              <span className="text-green-600">Preview</span>
+                            {lecture.isPreviewFree &&
+                             (
+                              <span onClick={()=>setPlayerData({videoId:lecture.lectureUrl.split('/').pop()})}
+                                className="text-green-600">Preview</span>
                             )}
 
                             <span>
@@ -179,8 +182,14 @@ const CourseDetails = () => {
         <div className="max-w-course-card z-10 shadow-custom-card
           rounded-t md:rounded-none overflow-hidden bg-white min-w-[300px
           sm-w-[420px]">
+          {
+            playerData
+            ?<YouTube videoId={playerData.videoId} 
+            opts={{playerVars:{autoplay:1}}} iframeClassName="w-full aspect-video">
 
-          <img src={courseData.courseThumbnail}/>
+            </YouTube>
+           :<img src={courseData.courseThumbnail}/>
+          } 
 
           <div className="p-5">
           <div className="flex items-center gap-2">
