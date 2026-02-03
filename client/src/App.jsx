@@ -23,7 +23,7 @@ const App = () => {
           <Route path='/course-list/:input' element={<CourseList/>}/>
          <Route path='/course/:id' element={<CourseDetails/>}/>
           <Route path='/my-enrollments' element={<MyEnrollment/>}/>
-          <Route path='/palyer/:courseId' element={<Player/>}/>
+          <Route path='/player/:courseId' element={<Player/>}/>
           <Route path='/loading/:path' element={<Loading/>}/>
 
 

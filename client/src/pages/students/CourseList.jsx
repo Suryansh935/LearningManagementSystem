@@ -34,7 +34,7 @@ const CourseList = () => {
       justify-between w-full'>
 
         <div className=''>
-          <h1 className='text-4xl font-semibold text-gray-800'>Course List</h1>
+          <h1 className='text-4xl font-semibol/d text-gray-800'>Course List</h1>
       
           <p className='text-gray-500'>
           <span className='text-blue-600 cursor-pointer'
