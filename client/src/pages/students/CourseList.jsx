@@ -33,7 +33,7 @@ const CourseList = () => {
       <div className='flex md:flex-row flex-col gap-6 items-start 
       justify-between w-full'>
 
-        <div className=''>
+        <div className>
           <h1 className='text-4xl font-semibol/d text-gray-800'>Course List</h1>
       
           <p className='text-gray-500'>
