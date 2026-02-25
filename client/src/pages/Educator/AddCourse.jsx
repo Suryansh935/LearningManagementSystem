@@ -18,7 +18,7 @@ const AddCourse = () => {
   
   const [lectureDetails,setLectureDetails]=useState(
    {
-    lecturTitle:'',
+    lectureTitle:'',
     lectureDuration:'',
     lectureUrl:'',
     isPreviewFree:false,
@@ -118,23 +118,28 @@ const AddCourse = () => {
 // and removes the lecture at lectureIndex from that chapter's lecture array using splice().
 // Finally, it updates the chapters state with the modified data.
     
-    const handleLecture=(action,chapterId,lectureIndex)=>{
-      if(action==='add'){
-        setCurrentChapterId(chapterId);
-        setShowPopup(true);
-      }
-      else if(action==='remove'){
-        setChapters(
-          chapters.map((chapter)=>{
-            if(chapter.chapterId===chapterId){
-              chapter.chapterContent.splice(lectureIndex,1);{/*splice() is used to remove 
-              // or add elements in array.Finds the correct chapter using chapterId
-👉            //Removes one lecture from that chapter using lectureIndex*/}
-            }
-          })
-        )
-      }
-    }
+const handleLecture = (action, chapterId, lectureIndex) => {
+  if (action === 'add') {
+    setCurrentChapterId(chapterId);
+    setShowPopup(true);
+  }
+
+  else if (action === 'remove') {
+    setChapters(prevChapters =>
+      prevChapters.map(chapter => {
+        if (chapter.chapterId === chapterId) {
+          return {
+            ...chapter,
+            chapterContent: chapter.chapterContent.filter(
+              (_, index) => index !== lectureIndex
+            )
+          };
+        }
+        return chapter;  // ✅ must return unchanged chapter
+      })
+    );
+  }
+};
    
     const handleSubmit=async(e)=>{
       e.preventDefault()
@@ -235,8 +240,10 @@ const AddCourse = () => {
           </span>
          </div>
 
-         <span className='text-gray-500'>
-         {chapter.chapterContent.length} Lectures</span>
+        <span className='text-gray-500'>
+        {chapter.chapterContent.length}{" "}
+        {chapter.chapterContent.length === 1 ? "Lecture" : "Lectures"}
+      </span>
           
           <img src={assets.cross_icon} alt="" 
           className='cursor-pointer' onClick={()=>
@@ -259,8 +266,8 @@ const AddCourse = () => {
                    'Free Preview' :'Paid'}</span>
                     
                     <img src={assets.cross_icon} alt=""
-                    className='cursor-pointer' onClick=
-                    {()=>handleLecture('remove',chapter.chapterId)}/>
+                    className='cursor-pointer' 
+                    onClick={()=>handleLecture('remove',chapter.chapterId,lectureIndex)}/>
 
                   </div>
               ))}
