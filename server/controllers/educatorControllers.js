@@ -38,10 +38,12 @@ export const updateRoleEducator = async (req, res) => {
 //add new course
 export const addCourse = async (req, res) => {
   try {
-    const { courseData } = req.body
+    const courseData = req.body?.courseData
     const imageFile = req.file
-    const educatorId = req.auth.userId
-
+    const { userId: educatorId } = req.auth()
+     console.log("content-type:", req.headers["content-type"]);
+      console.log("body keys:", Object.keys(req.body || {}));
+      console.log("file:", req.file);
     if (!imageFile) {
       return res.json({
         success: false,
@@ -73,5 +75,17 @@ export const addCourse = async (req, res) => {
       success: false,
       message: error.message
     })
+  }
+}
+
+
+//get Educator Courses
+export const getEducatorCourses=async(req,res)=>{
+  try{
+    const educator=req.auth.userId
+    const courses=await Course.find({educator})
+    res.json({sucess:true,courses})
+  }catch(error){
+    res.json({success:false,message:error.message})
   }
 }
