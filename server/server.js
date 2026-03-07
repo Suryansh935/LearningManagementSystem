@@ -12,17 +12,17 @@ const app = express()
 
 
 
-// 1. GLOBAL MIDDLEWARES FIRST
-app.use(cors())
-app.use(express.json()) 
-app.use(clerkMiddleware())
+
+
 
 // 2. CONNECT SERVICES
 await connectDB()
+app.use(cors())
+app.use(clerkMiddleware())
 await connectCloudinary()
 
 // 3. ROUTES
-app.post('/clerk', clerkWebhooks)
+app.post('/clerk',express.json(), clerkWebhooks)
 app.use('/api/educator', educatorRouter)
 app.use('/api/course',courseRouter)
 
