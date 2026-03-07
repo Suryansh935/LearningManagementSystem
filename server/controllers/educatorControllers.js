@@ -2,6 +2,7 @@ import { createClerkClient } from "@clerk/backend";
 import Course from "../models/Course.js";
 import {v2 as cloudinary} from 'cloudinary'
 import { Purchase } from "../models/Purchase.js";
+import User from "../models/User.js"
 
 const clerkClient = createClerkClient({
   secretKey: process.env.CLERK_SECRET_KEY,
@@ -36,45 +37,51 @@ export const updateRoleEducator = async (req, res) => {
 };
 
 
-//add new course
 export const addCourse = async (req, res) => {
   try {
+
     const courseData = req.body?.courseData
     const imageFile = req.file
-    const { userId: educatorId } = req.auth()
-     console.log("content-type:", req.headers["content-type"]);
-      console.log("body keys:", Object.keys(req.body || {}));
-      console.log("file:", req.file);
+    const { userId } = req.auth()
+
     if (!imageFile) {
       return res.json({
-        success: false,
-        message: 'Thumbnail not attached'
+        success:false,
+        message:"Thumbnail not attached"
       })
     }
 
     const parsedCourseData = JSON.parse(courseData)
 
-    parsedCourseData.educator = educatorId
+    // find user in mongodb using clerkId
+   const educator = await User.findById(userId)
 
-    // Create course only once
+    if(!educator){
+      return res.json({
+        success:false,
+        message:"Educator not found"
+      })
+    }
+
+    parsedCourseData.educator = educator._id
+
     const newCourse = await Course.create(parsedCourseData)
 
-    // Upload image to cloudinary
     const imageUpload = await cloudinary.uploader.upload(imageFile.path)
 
-    newCourse.thumbnail = imageUpload.secure_url
+    newCourse.courseThumbnail = imageUpload.secure_url
 
     await newCourse.save()
 
     res.json({
-      success: true,
-      message: 'Course Added'
+      success:true,
+      message:"Course Added"
     })
 
-  } catch (error) {
+  } catch(error){
     res.json({
-      success: false,
-      message: error.message
+      success:false,
+      message:error.message
     })
   }
 }
