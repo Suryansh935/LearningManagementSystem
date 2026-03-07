@@ -22,7 +22,9 @@ app.use(clerkMiddleware())
 await connectCloudinary()
 
 // 3. ROUTES
-app.post('/clerk',express.json(), clerkWebhooks)
+// Remove express.json() from this specific route if you want to be safe, 
+// or ensure you handle the raw body.
+app.post('/clerk', express.raw({ type: 'application/json' }), clerkWebhooks);
 app.use('/api/educator', educatorRouter)
 app.use('/api/course',courseRouter)
 
