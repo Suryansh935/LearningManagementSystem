@@ -7,7 +7,7 @@ export const getAllCourses=async(req,res)=>{
         .select(['-courseContent','-enrolledStudents'])//remove course contetnt ans enrolled students from  courses
         .populate({path:'educator'})//in course model their is reference of user model .It will fetch user deails from there
         
-        res.json({succes:true,courses})
+        res.json({success:true,courses})
     }catch(error){
      res.json({success:false,message:error.message})
     }

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import humanizeDuration from 'humanize-duration'
 import {useAuth,useUser} from '@clerk/clerk-react'
 import axios from 'axios'
+import { toast } from "react-toastify";
 
 const AppContext = createContext();
 
@@ -25,6 +26,7 @@ export const AppContextProvider = (props) => {
   const fetchAllCourses=async()=>{
      try{
       const {data}=await axios.get(backendUrl+'/api/course/all');
+      console.log("API Response:", data); 
 
       if(data.success){
         setAllCourses(data.courses)
