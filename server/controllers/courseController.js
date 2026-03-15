@@ -28,7 +28,7 @@ export const getCourseId=async(req,res)=>{
                 }
             })
          })
-          res.json({succes:true,courseData})
+          res.json({success:true,courseData})
         }
 
     catch(error){

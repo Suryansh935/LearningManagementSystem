@@ -6,6 +6,8 @@ import Footer from "../../components/Students/Footer";
 import { assets } from "../../assets/assets";
 import humanizeDuration from "humanize-duration";
 import YouTube from 'react-youtube'
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const CourseDetails = () => {
   const { id } = useParams();
@@ -19,18 +21,34 @@ const CourseDetails = () => {
     calculateRating,
     calculateChapterTime,
     calculateTotalLectures,
-     calculateCourseDuration,
-    currency
+    calculateCourseDuration,
+    currency,backendUrl,
+    userData
   } = useContext(AppContext);
 
-  const fetchCourseData = () => {
-    const foundCourse = allCourses.find(course => course._id === id);
-    setCourseData(foundCourse);
+  const fetchCourseData = async() => {
+    try{
+      const {data}=await axios.get(backendUrl+'/api/course/'+id)
+      console.log("Course API Response:", data);
+
+
+      if(data.success){
+        setCourseData(data.courseData)
+      }
+      else{
+        toast.error(data.message)
+      }
+    }
+    catch(error){
+      toast.error(error.message)
+    }
   };
+
+
 
   useEffect(() => {
     fetchCourseData();
-  }, [allCourses, id]);
+  }, []);
   
   const toogleSection=(index)=>{
       setopenSection((prev)=>(

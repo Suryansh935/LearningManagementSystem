@@ -3,12 +3,39 @@ import {assets} from '../../assets/assets.js'
 import { Link } from 'react-router-dom'
 import {useClerk,UserButton,useUser} from '@clerk/clerk-react'
 import AppContext from '../../context/AppContext.jsx'
-
+import { toast } from "react-toastify";
+import axios from 'axios'
 const Navbar = () => {
-  const {navigate,isEducator}=useContext(AppContext)
+  
+  const {navigate,isEducator,backendUrl,
+    setIsEducator,getToken}=useContext(AppContext)
+
   const isCourseListPage=location.pathname.includes('/course-list')
+
   const {openSignIn}=useClerk()
   const {user}=useUser()
+
+  const becomeEducator=async()=>{
+    try{
+       if(isEducator){
+        navigate('/educator')
+        return;
+       }
+       const token=await getToken()
+       const {data}=await axios.get(backendUrl+'/api/educator/update-role',
+        {headers:{authorization:`Bearer ${token}`}}
+       )
+       if(data.success){
+        toast.success(data.message)
+       }
+       else{
+        toast.error(data.message)
+       }
+    }
+    catch(error){
+      toast.error(error.message)
+    }
+  }
   
   return (
     <div className={`flex items-center justify-between px-4 sm:px-10 md:px-14 lg:px-36 border-b 
@@ -23,7 +50,7 @@ const Navbar = () => {
         <div className='flex items-center gap-5'>{/*for laptop view.show my-enrollments & BecomeEducator button only when user is loggedin*/}
             {user &&
             <>
-              <button onClick={()=>{navigate('/educator')}}>{isEducator?'Educator Dashboard':
+              <button onClick={becomeEducator}>{isEducator?'Educator Dashboard':
                 'Become Educator'}
               </button>
 
@@ -43,7 +70,7 @@ const Navbar = () => {
        <div className='flex items-center gap-5'>
         {user && 
         <>
-       <button onClick={()=>{navigate('/educator')}}>
+       <button onClick={becomeEducator}>
         {isEducator?'Educator Dashboard':'Become Educator'}
         </button>
 

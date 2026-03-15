@@ -6,6 +6,7 @@ import {useAuth,useUser} from '@clerk/clerk-react'
 import axios from 'axios'
 import { toast } from "react-toastify";
 
+
 const AppContext = createContext();
 
 export const AppContextProvider = (props) => {
@@ -23,6 +24,7 @@ export const AppContextProvider = (props) => {
   const[enrolledCourses,setEnrolledCourses]=useState([])
   const [userData,setUserData]=useState([])
 
+  //fetch course form database and show them on frontend
   const fetchAllCourses=async()=>{
      try{
       const {data}=await axios.get(backendUrl+'/api/course/all');
@@ -39,6 +41,30 @@ export const AppContextProvider = (props) => {
     }
   }
 
+  //fetch user data
+  const fetchUserData=async()=>{
+    
+    if(user.publicMetadata.role==='educator'){
+      setIsEducator(true)
+    }
+
+    try{
+      const token = await getToken();
+      
+      const {data}=await axios.get(backendUrl +'/api/user/data',
+        {headers:{Authorization:`Bearer ${token}`}})
+      
+      if(data.success){
+        setUserData(data.user)
+      }
+      else{
+        toast.error(data.message)
+      }
+    }
+    catch(error){
+       toast.error(error.message)
+    }
+  }
   //Function to calcualte average rating of course
   const calculateRating=(course)=>{
     if(course.courseRatings.length===0){
@@ -48,7 +74,7 @@ export const AppContextProvider = (props) => {
     course.courseRatings.forEach(rating=>{
       totalRating+=rating.rating
   })
-  return totalRating/course.courseRatings.length
+  return Math.floor(totalRating/course.courseRatings.length)
   }
   
 
@@ -80,30 +106,46 @@ export const AppContextProvider = (props) => {
 
   //Fetch user Enrolled Courses
   const fetchUserEnrolledCourses=async()=>{
-    setEnrolledCourses(dummyCourses)
+    try{
+     const token=await getToken();
+     const {data}=await axios.get(backendUrl+'/api/user/enrolled-Courses',
+      {headers:{Authorization:`Bearer ${token}`}}
+     )
+     
+     if(data.success){
+      setEnrolledCourses(data.enrolledCourses.reverse())
+     }
+     else{
+      toast.error(data.message)
+     }
+    }
+
+    catch(error){
+     toast.error(error.message)
+    }
   }
 
   useEffect(()=>{
   fetchAllCourses()
-  fetchUserEnrolledCourses()
+  
   },[])
   
-  const logToken=async()=>{
-    console.log(await getToken());
-  }
+ 
   
   useEffect(()=>{
   if(user){
-    logToken()
+    fetchUserData()
+    fetchUserEnrolledCourses()
   }
   },[user])
 
   const value =
    {
     currency,allCourses,enrolledCourses,navigate,calculateRating,
-    isEducator,setIsEducator,calculateChapterTime,
-    calculateCourseDuration,calculateTotalLectures,
-    
+    isEducator,setIsEducator,calculateChapterTime, calculateCourseDuration,
+    calculateTotalLectures,fetchUserEnrolledCourses,backendUrl,
+    userData,setUserData,getToken,fetchAllCourses
+
   };
 
 
