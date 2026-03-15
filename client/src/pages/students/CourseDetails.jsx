@@ -23,13 +23,13 @@ const CourseDetails = () => {
     calculateTotalLectures,
     calculateCourseDuration,
     currency,backendUrl,
-    userData
+    userData,getToken
   } = useContext(AppContext);
 
   const fetchCourseData = async() => {
     try{
       const {data}=await axios.get(backendUrl+'/api/course/'+id)
-      console.log("Course API Response:", data);
+      
 
 
       if(data.success){
@@ -44,11 +44,42 @@ const CourseDetails = () => {
     }
   };
 
+  const enrollCourse=async()=>{
+    try{
+     if(!userData){
+      return toast.warn('Login to enroll')
+     }
+     if(isAlreadyEnrolled){
+      return toast.warn('Already Enrolled')
+     }
 
+     const token=await getToken();
+     const {data}=await axios.post(backendUrl+'/api/user/purchase',
+      {courseId:courseData._id} ,{headers:{Authorization:`Bearer ${token}`}})
+
+      if(data.success){
+        const {session_url}=data
+        window.location.replace(session_url)
+      }
+      else{
+        toast.error(data.message)
+      }
+    }catch(error){
+      toast.error(error.message)
+    }
+  }
 
   useEffect(() => {
     fetchCourseData();
   }, []);
+
+useEffect(() => {
+  if (userData && courseData && userData.enrolledCourses) {
+    setIsAlreadyEnrolled(
+      userData.enrolledCourses.includes(courseData._id)
+    );
+  }
+}, [userData, courseData]);
   
   const toogleSection=(index)=>{
       setopenSection((prev)=>(
@@ -247,8 +278,8 @@ const CourseDetails = () => {
            </div>
            </div>
 
-           <button className="md:mt-6 mt-4 w-full py-3 rounded bg-blue-600
-           text-white font-medium">
+           <button onClick={enrollCourse} className="md:mt-6 mt-4 w-full 
+           py-3 rounded bg-blue-600text-white font-medium">
             {isAlreadyEnrolled
             ?'Already Enrolled'
             :'Enroll Now'}
