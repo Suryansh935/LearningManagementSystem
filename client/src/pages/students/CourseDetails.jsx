@@ -92,9 +92,9 @@ useEffect(() => {
 
   return (
     <>
-    <div className="relative md:px-36 px-8 md:pt-30 pt-20">
+    <div className="relative md:px-36 px-8 md:pt-30 pt-20 bg-gradient-to-b from-cyan-100/70 to-white">
       {/* Background */}
-      <div className="absolute top-0 left-0 w-full h-section-height -z-10 bg-gradient-to-b from-cyan-100/70" />
+      <div className="absolute top-0 left-0 w-full h-section-height -z-10 " />
 
       <div className="flex md:flex-row flex-col-reverse gap-10 items-start justify-between text-left">
         
@@ -279,7 +279,7 @@ useEffect(() => {
            </div>
 
            <button onClick={enrollCourse} className="md:mt-6 mt-4 w-full 
-           py-3 rounded bg-blue-600text-white font-medium">
+           py-3 rounded bg-blue-600 text-white font-medium">
             {isAlreadyEnrolled
             ?'Already Enrolled'
             :'Enroll Now'}

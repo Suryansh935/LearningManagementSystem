@@ -77,6 +77,7 @@ export const stripeWebhooks = async (req, res) => {
 
   const sig = req.headers["stripe-signature"];
   let event;
+  console.log("Stripe event received:", event.type);
 
   try {
     event = stripeInstance.webhooks.constructEvent(
@@ -98,6 +99,11 @@ export const stripeWebhooks = async (req, res) => {
       const session = await stripeInstance.checkout.sessions.list({
         payment_intent: paymentIntentId
       });
+
+      if(!session.data.length){
+        console.log("No session found");
+        return res.json({received:true});
+      }
 
       const { purchaseId } = session.data[0].metadata;
 

@@ -1,13 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import uniqid from 'uniqid'
 import "quill/dist/quill.snow.css";
 import Quill from 'quill'
 import { assets } from '../../assets/assets';
+import axios from 'axios'
+import { toast } from 'react-toastify'
+import AppContext from '../../context/AppContext';
 
 const AddCourse = () => {
+  const {backendUrl,getToken}=useContext(AppContext)
+   
   const quillRef=useRef(null);
   const editorRef=useRef(null);
-
+  
   const [courseTitle,setCourseTitle]=useState('')
   const [coursePrice,setCoursePrice]=useState(0)
   const [discount,setDiscount]=useState(0)
@@ -142,7 +147,42 @@ const handleLecture = (action, chapterId, lectureIndex) => {
 };
    
     const handleSubmit=async(e)=>{
+      try{
       e.preventDefault()
+      if(!image){
+        toast.error('Thumbnail not selected')
+      }
+
+      const courseData={
+        courseTitle,
+        courseDescription:quillRef.current.root.innerHTML,
+        coursePrice:Number(coursePrice),
+        discount:Number(discount),
+        courseContent:chapters,
+      }
+      const formData=new FormData()
+      formData.append('courseData',JSON.stringify(courseData))
+      formData.append('thumbnail',image)
+
+      const token=await getToken()
+      const {data}=await axios.post(backendUrl+'/api/educator/add-course',formData,
+      {headers:{Authorization:`Bearer ${token}`}})
+
+      if(data.success){
+        toast.success(data.message)
+        setCourseTitle('')
+        setCoursePrice(0)
+        setDiscount(0)
+        setImage(null)
+        setChapters([])
+        quillRef.current.root.innerHTML=""
+      }else{
+        toast.error(data.message)
+      }
+      }
+      catch(error){
+        toast.error(error.message)
+      }
     }
   return (
     <div className='h-screen overflow-scroll flex flex-col 
