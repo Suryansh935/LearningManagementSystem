@@ -145,7 +145,7 @@ useEffect(() => {
 
           <p className="text-sm">
             Course by{" "}
-            <span className="text-blue-600 underline">Great Stack</span>
+            <span className="text-blue-600 underline">{courseData.educator?.name}</span>
           </p>
 
           {/* COURSE STRUCTURE */}
