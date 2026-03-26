@@ -65,9 +65,15 @@ const getYouTubeId = (url) => {
      const {data}=await axios.post(backendUrl+'/api/user/purchase',
       {courseId:courseData._id} ,{headers:{Authorization:`Bearer ${token}`}})
 
-      if(data.success){
-        const {session_url}=data
-        window.location.replace(session_url)
+    
+
+      if (data.success) {
+        console.log("Session URL:", data.session_url);
+        console.log("Purchase data", data);
+
+        setTimeout(() => {
+          window.location.replace(data.session_url);
+        }, 3000);
       }
       else{
         toast.error(data.message)

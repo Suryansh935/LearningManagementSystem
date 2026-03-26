@@ -25,7 +25,11 @@ app.use(clerkMiddleware());
  * and must use express.raw() to preserve the signature for Svix.
  */
 app.post('/clerk', express.raw({ type: 'application/json' }), clerkWebhooks);
-app.post('/stripe',express.raw({ type: 'application/json' }),stripeWebhooks)
+app.post(
+  '/stripe',
+  express.raw({ type: 'application/json' }), // ⭐ VERY IMPORTANT
+  stripeWebhooks
+);
 
 /** * Standard JSON parsing for all other routes 
  */

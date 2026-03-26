@@ -49,7 +49,7 @@ export const purchaseCourse = async (req, res) => {
     const purchaseData = {
       courseId: courseData._id,
       userId,
-      amount: (
+      amount: Number(
         courseData.coursePrice -
         (courseData.discount * courseData.coursePrice) / 100
       ).toFixed(2),
