@@ -36,8 +36,7 @@ export const userEnrolledCourses=async(req,res)=>{
 export const purchaseCourse = async (req, res) => {
   try {
     const { courseId } = req.body;
-    const { origin } = req.headers;
-    const userId = req.auth.userId;
+    const userId = req.auth().userId; // Updated to function call as per Clerk warning
 
     const userData = await User.findById(userId);
     const courseData = await Course.findById(courseId);
@@ -46,24 +45,26 @@ export const purchaseCourse = async (req, res) => {
       return res.json({ success: false, message: "Data not Found" });
     }
 
-    const purchaseData = {
-      courseId: courseData._id,
-      userId,
-      amount: Number(
-        courseData.coursePrice -
-        (courseData.discount * courseData.coursePrice) / 100
-      ).toFixed(2),
-    };
+    // Calculate amount once
+    const amount = Number(
+      courseData.coursePrice - (courseData.discount * courseData.coursePrice) / 100
+    ).toFixed(2);
 
-    const newPurchase = await Purchase.create(purchaseData);
+    // 🔥 FIX: Find existing pending/failed purchase OR create a new one
+    // This prevents a second document from being created for the same user/course
+    const purchase = await Purchase.findOneAndUpdate(
+      { userId, courseId }, 
+      { 
+        amount, 
+        status: 'pending' // Reset to pending if they are retrying a failed attempt
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
 
-    // Stripe gateway initialize
-    console.log("CLIENT_URL:", process.env.CLIENT_URL);
-
+    // Initialize Stripe
     const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
     const currency = process.env.CURRENCY.toLowerCase();
 
-    // creating line items for stripe
     const line_items = [
       {
         price_data: {
@@ -71,7 +72,7 @@ export const purchaseCourse = async (req, res) => {
           product_data: {
             name: courseData.courseTitle,
           },
-          unit_amount: Math.floor(newPurchase.amount * 100),
+          unit_amount: Math.round(amount * 100), // Use Math.round for currency safely
         },
         quantity: 1,
       },
@@ -83,15 +84,16 @@ export const purchaseCourse = async (req, res) => {
       line_items,
       mode: "payment",
       metadata: {
-        purchaseId: newPurchase._id.toString(),
+        purchaseId: purchase._id.toString(), // Pass the ID from the upserted doc
       },
     });
 
     res.json({ success: true, session_url: session.url });
   } catch (error) {
+    console.error("Purchase Error:", error);
     res.json({ success: false, message: error.message });
   }
-}
+};
 
 //update userCourseProgress
 

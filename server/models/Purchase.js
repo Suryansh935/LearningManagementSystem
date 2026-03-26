@@ -23,5 +23,7 @@ const PurchaseSchema = new mongoose.Schema({
 },{
     timestamps:true
 })
-
+//  PREVENT DUPLICATION: This creates a unique constraint 
+// on the combination of userId and courseId.
+PurchaseSchema.index({ userId: 1, courseId: 1 }, { unique: true })
 export const Purchase = mongoose.model('Purchase',PurchaseSchema)
