@@ -43,6 +43,14 @@ const CourseDetails = () => {
       toast.error(error.message)
     }
   };
+  //get url of video
+  
+
+const getYouTubeId = (url) => {
+  const regExp = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/;
+  const match = url.match(regExp);
+  return match ? match[1] : null;
+};
 
   const enrollCourse=async()=>{
     try{
@@ -198,8 +206,15 @@ useEffect(() => {
                           <div className="flex gap-2 text-gray-500">
                             {lecture.isPreviewFree &&
                              (
-                              <span onClick={()=>setPlayerData({videoId:lecture.lectureUrl.split('/').pop()})}
-                                className="text-green-600">Preview</span>
+                              <span
+                              onClick={(e) => {
+                                e.stopPropagation(); // 🔥 FIX
+                                setPlayerData({ videoId: lecture.lectureUrl });
+                              }}
+                              className="text-green-600 cursor-pointer"
+                            >
+                              Preview
+                            </span>
                             )}
 
                             <span>
@@ -231,14 +246,15 @@ useEffect(() => {
         <div className="max-w-course-card z-10 shadow-custom-card
           rounded-t md:rounded-none overflow-hidden bg-white min-w-[300px
           sm-w-[420px]">
-          {
-            playerData
-            ?<YouTube videoId={playerData.videoId} 
-            opts={{playerVars:{autoplay:1}}} iframeClassName="w-full aspect-video">
-
-            </YouTube>
-           :<img src={courseData.courseThumbnail}/>
-          } 
+        {playerData?.videoId ? (
+          <YouTube
+            videoId={getYouTubeId(playerData.videoId)}
+            opts={{ playerVars: { autoplay: 1 } }}
+            iframeClassName="w-full aspect-video"
+          />
+        ) : (
+          <img src={courseData.courseThumbnail} />
+        )}
 
           <div className="p-5">
           <div className="flex items-center gap-2">

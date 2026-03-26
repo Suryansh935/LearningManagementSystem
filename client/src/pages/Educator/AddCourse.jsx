@@ -216,7 +216,7 @@ const handleLecture = (action, chapterId, lectureIndex) => {
     ></div>
     </div>
     
-    {/*course proce ans course thumbnail upload field*/}
+    {/*course price and course thumbnail upload field*/}
     <div className='flex items-center justify-between flex-wrap'>
       <div className='flex flex-col gap-1'>
         

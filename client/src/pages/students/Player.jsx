@@ -34,6 +34,12 @@ const Player = () => {
     })
   }
 
+  const getYouTubeId = (url) => {
+  const regExp = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/;
+  const match = url.match(regExp);
+  return match ? match[1] : null;
+};
+
 const toogleSection=(index)=>{
       setOpenSections((prev)=>(
          {...prev,
@@ -168,10 +174,19 @@ const toogleSection=(index)=>{
                     <div className="flex gap-2 text-gray-500">
                       {lecture.lectureUrl &&
                         (
-                        <span onClick={()=>setPlayerData({
-                          ...lecture,chapter:index+1,lecture:i+1})}
-
-                          className="text-green-600 cursor-pointer">Watch</span>
+                        <span
+                          onClick={(e) => {
+                            e.stopPropagation(); // 🔥 prevent collapse
+                            setPlayerData({
+                              ...lecture,
+                              chapter: index + 1,
+                              lecture: i + 1
+                            });
+                          }}
+                          className="text-green-600 cursor-pointer"
+                        >
+                          Watch
+                        </span>
                       )}
 
                       <span>
@@ -201,7 +216,7 @@ const toogleSection=(index)=>{
         {playerData
         ?
         (<div className='md:mt-10'>
-        <YouTube videoId={playerData.lectureUrl.split('/').pop()}
+        <YouTube videoId={getYouTubeId(playerData.lectureUrl)}
          iframeClassName="w-full aspect-video"/>
         
         <div className='flex justify-between items-center mt-1'> 

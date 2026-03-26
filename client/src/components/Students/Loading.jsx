@@ -16,10 +16,10 @@ const Loading = () => {
   }, [path, navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="w-16 sm:w-20 aspect-square border-4 border-gray-300 
-      border-t-4 border-blue-400 rounded-full animate-spin"></div>
-    </div>
+     <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
+    <div className="w-16 h-16 border-4 border-gray-300 
+    border-t-blue-600 rounded-full animate-spin"></div>
+  </div>
   );
 };
 
